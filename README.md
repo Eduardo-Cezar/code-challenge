@@ -82,3 +82,148 @@ The solution should be based on the diagrams below:
 
 
 Thank you for participating!
+
+---
+
+### Data Pipeline - Indicium Challenge
+
+This repository contains the solution for the data pipeline challenge proposed by Indicium. The objective is to create a pipeline that extracts data from a PostgreSQL database and a CSV file, saves the data as `.parquet` files on the local disk, and then loads this data into a final PostgreSQL database.
+
+
+
+### Tools Used
+
+- **Airflow**: For pipeline orchestration and scheduling.
+- **Meltano**: For data loading (ETL).
+- **PostgreSQL**: Source and destination databases.
+- **Docker**: For containerizing the services.
+- **Parquet**: File format used to store intermediate data.
+
+
+
+### Project Structure
+
+The project structure is organized as follows:
+```
+code-challenge/
+├── docker-compose.yml
+├── Dockerfile.meltano
+├── data/
+│ ├── output/
+│ │ ├── csv/
+│ │ │ └── YYYY-MM-DD/
+│ │ │   └── order_details.parquet
+│ │ └── postgres/
+│ │ │ ├── categories/
+│ │ │ │ └── YYYY-MM-DD/
+│ │ │ │   └── categories.parquet
+│ │ │ ├── customers/
+│ │ │ │ └── YYYY-MM-DD/
+│ │ │ │   └── customers.parquet
+│ │ │ ├── employees/
+│ │ │ │ └── YYYY-MM-DD/
+│ │ │ │   └── employees.parquet
+│ │ │ ├── orders/
+│ │ │ │ └── YYYY-MM-DD/
+│ │ │ │   └── orders.parquet
+│ │ │ ├── products/
+│ │ │ │ └── YYYY-MM-DD/
+│ │ │ │   └── products.parquet
+│ │ │ ├── shippers/
+│ │ │ │ └── YYYY-MM-DD/
+│ │ │ │   └── shippers.parquet
+│ │ │ └── suppliers/
+│ │ │ │ └── YYYY-MM-DD/
+│ │ │ │   └── suppliers.parquet
+│ └── northwind.sql
+│ └── order_details.csv
+│
+├── meltano/
+│ ├── extract/
+│ │ └── extract_to_parquet.py  # Extraction to Parquet files
+│ │
+│ ├── load/
+│ │ ├── load_to_db.py  # Loading data into the transformed database
+│ │ └── run_load.py  # Main load script
+│ │
+│ └── transform/
+│ │ └── run_transform.py  # Orchestrates extraction and loading
+│
+├── airflow/
+│ └── dags/
+│ └── northwind_etl.py # Airflow DAG for orchestration
+```
+
+
+### Pipeline Architecture Overview
+![Texto alternativo](docs/arq.png)
+
+### Execution
+### Prerequisites
+
+- Docker
+- Docker Compose
+- Git
+
+### Installation
+
+1. Clone the repository:
+```
+git clone https://github.com/Eduardo-Cezar/code-challenge.git
+cd code-challenge
+```
+
+2. Start the containers:
+```
+docker-compose up -d
+```
+3. If using Unix-like operating systems
+```
+chmod +x exec-pipeline.sh
+```
+### Pipeline Execution
+#### Executes the entire pipeline.
+Unix-like
+```
+./exec-pipeline.sh transform
+```
+
+Windows
+```
+docker exec -it code-challenge-meltano-1 python /project/transform/run_transform.py
+```
+
+#### For debugging purposes, it is possible to specify a date to perform tests:
+
+Unix-like
+```
+./exec-pipeline.sh transform-date 2024-05-23
+```
+
+Windows
+```
+docker exec -it code-challenge-meltano-1 python /project/transform/run_transform.py 2025-05-23
+```
+
+
+#### Load the current date:
+Unix-like
+```
+./exec-pipeline.sh load
+```
+Windows
+```
+docker exec -it code-challenge-meltano-1 python /project/load/run_load.py
+```
+
+
+#### Loads a specific date:
+Unix-like
+```
+./exec-pipeline.sh load-date 2025-05-23
+```
+Windows
+```
+docker exec -it code-challenge-meltano-1 python /project/load/run_load.py 2025-05-23
+```
+

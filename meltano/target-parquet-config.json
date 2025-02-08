@@ -1,0 +1,4 @@
+{
+    "destination_path": "data/output",
+    "file_naming": "{stream_name}.parquet"
+  }
